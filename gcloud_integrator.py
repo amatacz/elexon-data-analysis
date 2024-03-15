@@ -49,8 +49,8 @@ class GCloudIntegrator:
 # "591906381433"
 # "elexon-project-service-account-secret"
 
-x = GCloudIntegrator("elexon-project")
-x.get_secret("elexon-project-service-account-secret")
-x.upload_data_to_cloud_from_file("elexon-project-raw-data-bucket",
-                                 "C:\\Users\\matacza\\Desktop\\Projekty\\elexon-project\\decompressed_files\\S0142_20211115_DF_20240314140804.csv",
-                                 "test_data.csv")
+# x = GCloudIntegrator("elexon-project")
+# x.get_secret("elexon-project-service-account-secret")
+# x.upload_data_to_cloud_from_file("elexon-project-raw-data-bucket",
+#                                  "C:\\Users\\matacza\\Desktop\\Projekty\\elexon-project\\decompressed_files\\S0142_20211115_DF_20240314140804.csv",
+#                                  "test_data.csv")

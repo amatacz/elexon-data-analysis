@@ -1,5 +1,5 @@
 import requests
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 import os
 import gzip
 import shutil
@@ -9,14 +9,15 @@ class DataExtractor:
     def __init__(self) -> None:
         # self.API = "alzf0zinvzwsfji"  # for aleksandra.matacz93@gmail.com
         self.API = "m4qq9k87r0vtnld"  # for a.matacz@o2.pl
-        self.BASE_URL_LIST = f"https://downloads.elexonportal.co.uk/p114/list"
-        self.BASE_URL_DOWNLOAD = f"https://downloads.elexonportal.co.uk/p114/download"
+        self.BASE_URL_LIST = "https://downloads.elexonportal.co.uk/p114/list"
+        self.BASE_URL_DOWNLOAD = "https://downloads.elexonportal.co.uk/p114/download"
 
     def get_availability_data(self):
         """
         Get availability data from URL
         """
-        url = f"{self.BASE_URL_LIST}?key={self.API}&date={date.today() - timedelta(days=1)}&filter=s0142"
+        yesterday = date.today() - timedelta(days=1)
+        url = f"{self.BASE_URL_LIST}?key={self.API}&date={yesterday}&filter=s0142"
         return self.get_data_from_url(url)
 
     def download_files_from_availability_data(self, destination_folder):
@@ -56,9 +57,10 @@ class DataExtractor:
                                    decompress_destination_folder: str) -> None:
         """
         Decompress dowloaded data to given folder.
+        Returns list of decompressed files paths.
         """
-        # Downloading data from URL
-        self.download_files_from_availability_data(download_destination_folder)
+        # # Downloading data from URL
+        # self.download_files_from_availability_data(download_destination_folder)
 
         print("EXTRACTING....")
 
@@ -82,6 +84,9 @@ class DataExtractor:
                 with open(file_name, 'wb') as f_out:
                     # Copy content of compressed file to destination file
                     shutil.copyfileobj(f_in, f_out)
+
+        decompressed_files_list = [x.path for x in os.scandir()]
+        return decompressed_files_list
 
     def get_data_from_url(self, url: str):
         """ Asserts response from url call.
