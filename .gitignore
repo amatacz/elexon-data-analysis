@@ -1,0 +1,8 @@
+*.txt
+*/__pycache__/*
+*.pyc
+
+secrets/
+env/
+decompressed_files/
+downloaded_files/
