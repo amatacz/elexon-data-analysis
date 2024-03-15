@@ -1,4 +1,5 @@
-*.txt
+infra-notes.txt
+initial-project-info.txt
 */__pycache__/*
 *.pyc
 
