@@ -25,12 +25,15 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     yesterday_date = DataConfiguratorObject.timeframe_window()
 
     availability_data = DataExtractorObject.get_availability_data(yesterday_date)
+    
+    # Send filenames to kafka
+    kafka.main(f"{yesterday_date}_filenames", availability_data)
 
     # for file in get_availability_data upload file to bucket
     for file in availability_data:
         availability_data_file = DataExtractorObject.download_files_from_availability_data(filename=file)
         GCloudIntegratorObject.upload_data_to_cloud_from_string("elexon-project-raw-data-bucket", availability_data_file, file)
 
-    kafka.main(f"{yesterday_date}_filenames", availability_data)
+
 
     return "DONE"
