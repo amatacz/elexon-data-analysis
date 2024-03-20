@@ -4,11 +4,10 @@ import os
 def read_config():
     # reads the client configuration from client.properties
     # and returns it as a key-value map
-    print("CURRENT DIRECTORY: ", os.getcwd())
-    print("LIST OF FILES: ", os.listdir())
-    
+    client_properties_file = os.path.join(os.path.dirname(__file__), 'kafka/client.properties')
+
     config = {}
-    with open("./client.properties") as fh:
+    with open(client_properties_file) as fh:
         for line in fh:
             line = line.strip()
             if len(line) != 0 and line[0] != "#":
