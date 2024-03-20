@@ -1,8 +1,12 @@
 from confluent_kafka import Producer
+import os
 
 def read_config():
     # reads the client configuration from client.properties
     # and returns it as a key-value map
+    print("CURRENT DIRECTORY: ", os.getcwd())
+    print("LIST OF FILES: ", os.listdir())
+    
     config = {}
     with open("./client.properties") as fh:
         for line in fh:
