@@ -12,15 +12,14 @@ class DataExtractor:
         self.BASE_URL_LIST = "https://downloads.elexonportal.co.uk/p114/list"
         self.BASE_URL_DOWNLOAD = "https://downloads.elexonportal.co.uk/p114/download"
 
-    def get_availability_data(self):
+    def get_availability_data(self, yesterday_date):
         """
-        Get availability data from URL
+        Get actuals data from URL
         """
-        yesterday = date.today() - timedelta(days=1)
-        url = f"{self.BASE_URL_LIST}?key={self.API}&date={yesterday}&filter=s0142"
+        url = f"{self.BASE_URL_LIST}?key={self.API}&date={yesterday_date}&filter=s0142"
         return self.get_data_from_url(url)
 
-    def download_files_from_availability_data(self, destination_folder):
+    def download_files_from_availability_data_and_save_it_locally(self, destination_folder):
         "Download data to given folder."
 
         availability_data = self.get_availability_data()  # Get availability data
@@ -29,7 +28,7 @@ class DataExtractor:
         if not os.path.exists(destination_folder):  # If not exists - make folder for download data
             os.makedirs(destination_folder)
 
-        # loop through availability data 
+        # loop through availability data
         for data in availability_data:
             # set url for downloading data
             url = f"{self.BASE_URL_DOWNLOAD}?key={self.API}&filename={data}"
@@ -38,7 +37,7 @@ class DataExtractor:
             file_name = url.split("filename=")[-1]
             file_path = os.path.join(destination_folder, file_name)
 
-            # Download data
+            # Download data and save it to 
             r = requests.get(url, stream=True)
             if r.ok:
                 with open(file_path, 'wb') as f:  # open file from path in binary mode
@@ -52,6 +51,17 @@ class DataExtractor:
                     r.status_code,
                     r.text))
 
+    def download_files_from_availability_data(self, filename):
+
+        url = f"{self.BASE_URL_DOWNLOAD}?key={self.API}&filename={filename}"
+
+        # Download the file content
+        response = requests.get(url)
+        if response.status_code != 200:
+            raise Exception("Failed to download file from Elexon portal.")
+
+        return response.content
+
     def decompress_downloaded_data(self,
                                    download_destination_folder: str,
                                    decompress_destination_folder: str) -> None:
@@ -59,8 +69,6 @@ class DataExtractor:
         Decompress dowloaded data to given folder.
         Returns list of decompressed files paths.
         """
-        # # Downloading data from URL
-        # self.download_files_from_availability_data(download_destination_folder)
 
         print("EXTRACTING....")
 
@@ -89,7 +97,8 @@ class DataExtractor:
         return decompressed_files_list
 
     def get_data_from_url(self, url: str):
-        """ Asserts response from url call.
+        """
+        Asserts response from url call.
         Return empty dict if fetching error occurs.
         """
         try:

@@ -1,6 +1,5 @@
 from google.cloud import secretmanager_v1
 from google.cloud import storage
-from google.oauth2 import service_account
 import json
 
 
@@ -45,6 +44,14 @@ class GCloudIntegrator:
         with open(data_to_upload, "rb") as file:
             blob.upload_from_file(file)  # upload data to blob
 
+    def upload_data_to_cloud_from_string(self, bucket_name, data_to_upload, blob_name):
+        ''' Uploads files with api data to GCP buckets. '''
+        bucket = self._get_google_cloud_client().bucket(bucket_name)  # connect to bucket
+        blob = bucket.blob(blob_name)  # create a blob        
+
+        blob.upload_from_string(data_to_upload)
+
+        print("File successfully uploaded to bucket")
 
 # "591906381433"
 # "elexon-project-service-account-secret"

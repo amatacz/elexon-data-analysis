@@ -1,5 +1,5 @@
-from data_extractor import DataExtractor
-from gcloud_integrator import GCloudIntegrator
+from gcloud.gcloud_functions.models.data_extractor import DataExtractor
+from gcloud.gcloud_functions.shared.gcloud_integrator import GCloudIntegrator
 
 
 def get_availability_data_decompress_and_upload_to_bucket():
