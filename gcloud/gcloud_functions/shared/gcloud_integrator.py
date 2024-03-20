@@ -33,7 +33,9 @@ class GCloudIntegrator:
         """
         # Try to create Storage Client
         try:
-            return storage.Client.from_service_account_info(self.cloud_key)  # return Google Cloud Storage Client
+            # return storage.Client.from_service_account_info(self.cloud_key)  # return Google Cloud Storage Client
+            return storage.Client.from_service_account_info()  # return Google Cloud Storage Client
+
         except Exception:
             return None  # if there is no cloud key provided
 
