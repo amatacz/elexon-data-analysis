@@ -27,7 +27,7 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
 
     availability_data = DataExtractorObject.get_availability_data(yesterday_date)
 
-    availability_data_bytes = json.dumps(availability_data.keys(), indent=2).encode('utf-8')
+    availability_data_bytes = json.dumps(list(availability_data.keys()), indent=2).encode('utf-8')
 
     # Send filenames to kafka
     kafka.main(f"{yesterday_date}_filenames", availability_data_bytes)
