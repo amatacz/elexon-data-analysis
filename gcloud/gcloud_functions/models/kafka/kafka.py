@@ -4,7 +4,7 @@ import os
 def read_config():
     # reads the client configuration from client.properties
     # and returns it as a key-value map
-    client_properties_file = os.path.join(os.path.dirname(__file__), 'kafka/client.properties')
+    client_properties_file = os.path.join(os.path.dirname(__file__), 'client.properties')
 
     config = {}
     with open(client_properties_file) as fh:
