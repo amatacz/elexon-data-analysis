@@ -19,7 +19,7 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     DataConfiguratorObject = DataConfigurator()
 
     # Get project secret
-    GCloudIntegratorObject.get_secret("elexon-project-service-account-secret")
+    # GCloudIntegratorObject.get_secret("elexon-project-service-account-secret")
 
     # Get yesterday's date
     yesterday_date = DataConfiguratorObject.timeframe_window()
