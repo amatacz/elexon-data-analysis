@@ -37,7 +37,7 @@ class DataExtractor:
             file_name = url.split("filename=")[-1]
             file_path = os.path.join(destination_folder, file_name)
 
-            # Download data and save it to 
+            # Download data and save it to
             r = requests.get(url, stream=True)
             if r.ok:
                 with open(file_path, 'wb') as f:  # open file from path in binary mode
