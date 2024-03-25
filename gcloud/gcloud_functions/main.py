@@ -10,6 +10,12 @@ from models.kafka import kafka
 @functions_framework.http
 def get_elexon_data_and_send_it_to_kafka(request, context=None):
 
+    """
+    Function to get data from Elexon API,
+    send filenames to Kafka topic
+    and download .gz data to Google Storage Bucket.
+    """
+
     # Create DataExtractor Object
     DataExtractorObject = DataExtractor()
 
@@ -29,10 +35,12 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
 
     if availability_data:
 
-        availability_data_bytes = json.dumps(list(availability_data.keys()), indent=2).encode('utf-8')
-
-        # Send filenames to kafka
-        kafka.main(f"{yesterday_date}_filenames", availability_data_bytes)
+        availability_data_filenames_in_bytes = json.dumps(list(availability_data.keys()), indent=2).encode('utf-8')
+        try:
+            # Send filenames to kafka
+            kafka.main(f"{yesterday_date}_filenames", availability_data_filenames_in_bytes)
+        except Exception as e:
+            print(f"Error with sending data to kafka encoutered: {e}")
 
         # for file in get_availability_data upload file to bucket
         for file in availability_data:
@@ -40,7 +48,7 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
             GCloudIntegratorObject.upload_data_to_cloud_from_string("elexon-project-raw-data-bucket", availability_data_file, file)
 
         print(f"Data from {yesterday_date} fetched.")
-        return None
+        return availability_data_filenames_in_bytes
     else:
         print(f"No data available from date: {yesterday_date}")
-        return None
+        return {}
