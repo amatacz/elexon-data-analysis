@@ -1,5 +1,6 @@
 import functions_framework
 import json
+from retry_decorator import retry
 
 from shared.gcloud_integrator import GCloudIntegrator
 from models.data_extractor import DataExtractor
@@ -14,6 +15,9 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     Function to get data from Elexon API,
     send filenames to Kafka topic
     and download .gz data to Google Storage Bucket.
+
+    Return empty list if no data is fetched
+    or sending message to kafka failed.
     """
 
     # Create DataExtractor Object
@@ -31,24 +35,28 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     # Get yesterday's date
     yesterday_date = DataConfiguratorObject.timeframe_window()
 
-    availability_data = DataExtractorObject.get_availability_data(yesterday_date)
+    availability_data = DataExtractorObject.get_availability_data(date=yesterday_date)
 
-    if availability_data:
+    if not availability_data:
+        print("Issue with fetching elexon data.")
+        return []
 
-        availability_data_filenames_in_bytes = json.dumps(list(availability_data.keys()), indent=2).encode('utf-8')
-        try:
-            # Send filenames to kafka
-            kafka.main(f"{yesterday_date}_filenames", availability_data_filenames_in_bytes)
-        except Exception as e:
-            print(f"Error with sending data to kafka encoutered: {e}")
-
+    else:
         # for file in get_availability_data upload file to bucket
+
         for file in availability_data:
             availability_data_file = DataExtractorObject.download_files_from_availability_data(filename=file)
             GCloudIntegratorObject.upload_data_to_cloud_from_string("elexon-project-raw-data-bucket", availability_data_file, file)
 
-        print(f"Data from {yesterday_date} fetched.")
-        return availability_data_filenames_in_bytes
-    else:
-        print(f"No data available from date: {yesterday_date}")
-        return {}
+        print("Data fetched successfully.")
+
+        try:
+            # Save availability data filenames in bytes
+            availability_data_filenames_in_bytes = json.dumps(list(availability_data.keys()), indent=2).encode('utf-8')
+
+            # Send filenames to kafka
+            kafka.main(f"{yesterday_date}_filenames", availability_data_filenames_in_bytes)
+            return list(availability_data.keys())
+        except Exception as e:
+            print(f"Issue with sending data to kafka {e}.")
+            return []

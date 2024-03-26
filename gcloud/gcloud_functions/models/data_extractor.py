@@ -12,11 +12,11 @@ class DataExtractor:
         self.BASE_URL_LIST = "https://downloads.elexonportal.co.uk/p114/list"
         self.BASE_URL_DOWNLOAD = "https://downloads.elexonportal.co.uk/p114/download"
 
-    def get_availability_data(self, yesterday_date):
+    def get_availability_data(self, date):
         """
         Get actuals data from URL
         """
-        url = f"{self.BASE_URL_LIST}?key={self.API}&date={yesterday_date}&filter=s0142"
+        url = f"{self.BASE_URL_LIST}?key={self.API}&date={date}&filter=s0142"
         return self.get_data_from_url(url)
 
     def download_files_from_availability_data_and_save_it_locally(self, destination_folder):
