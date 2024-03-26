@@ -1,6 +1,5 @@
 import functions_framework
 import json
-from retry_decorator import retry
 
 from shared.gcloud_integrator import GCloudIntegrator
 from models.data_extractor import DataExtractor
