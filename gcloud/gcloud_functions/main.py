@@ -37,12 +37,11 @@ def get_elexon_data_and_send_it_to_kafka(request, context=None):
     availability_data = DataExtractorObject.get_availability_data(date=yesterday_date)
 
     if not availability_data:
-        print("Issue with fetching elexon data.")
+        print("Issue with fetching elexon data. There is no data from given date.")
         return []
 
     else:
         # for file in get_availability_data upload file to bucket
-
         for file in availability_data:
             availability_data_file = DataExtractorObject.download_files_from_availability_data(filename=file)
             GCloudIntegratorObject.upload_data_to_cloud_from_string("elexon-project-raw-data-bucket", availability_data_file, file)
